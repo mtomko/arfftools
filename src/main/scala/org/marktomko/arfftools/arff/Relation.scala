@@ -1,6 +1,13 @@
 package org.marktomko.arfftools.arff
 
-case class Relation[A](val name: String, val attributes: Seq[Attribute], val instances: Seq[Instance[A]]) {
+/**
+ * A simple representation of an ARFF relation, including a name,
+ * a description of ARFF attributes, and a list of problem instances.
+ * @param name the relation name
+ * @param attributes the attributes that make up the relation
+ * @param instances the problem instances
+ */
+case class Relation(val name: String, val attributes: Seq[Attribute], val instances: Seq[Instance]) {
   override def toString = {
     val buf = new StringBuilder
 

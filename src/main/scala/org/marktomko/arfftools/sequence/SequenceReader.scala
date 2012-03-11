@@ -1,9 +1,10 @@
 package org.marktomko.arfftools.sequence
 
-case class PolyASequence(val sequence: String) {
-  val upstream = sequence.substring(0, 100)
-  val signal = sequence.substring(100, 106)
-  val downstream = sequence.substring(106, sequence.length)
+case class PutativePolyASite(upstream: String, signal: String, downstream: String)
+
+object PutativePolyASite {
+  def from(s: String) =
+    PutativePolyASite(s.substring(0, 100), s.substring(100, 106), s.substring(106, s.length()))
 }
 
 class SequenceReader() {

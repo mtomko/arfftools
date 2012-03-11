@@ -1,5 +1,10 @@
 package org.marktomko.arfftools.arff
 
-case class Instance[A](val values: Seq[Any], val classification: A) {
-  override def toString = values.mkString(",")
+/**
+ * Simple class representing a single problem instance.
+ * @param values the collection of values comprising the instance
+ * @param classification the class value
+ */
+case class Instance(val values: Seq[Any], val classification: String) {
+  override def toString = (values :+ classification) mkString(",")
 }
