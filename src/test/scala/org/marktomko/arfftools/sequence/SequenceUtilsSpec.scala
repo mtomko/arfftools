@@ -3,7 +3,7 @@ package org.marktomko.arfftools.sequence
 import org.scalatest.Spec
 
 class SequenceUtilsSpec extends Spec {
-  describe("Sequence utilities") {
+  describe("Sequence Utilities") {
     it("should complement individual bases") {
       assert('A' === SequenceUtils.complement('T'))
       assert('T' === SequenceUtils.complement('A'))
