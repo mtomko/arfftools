@@ -1,4 +1,4 @@
-package org.marktomko.arfftools.sequence
+package org.marktomko.arfftools.polya
 
 class PutativePolyASite(val upstream: String, val signal: String, val downstream: String)
 

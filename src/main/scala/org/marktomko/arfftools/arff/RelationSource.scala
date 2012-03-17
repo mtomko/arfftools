@@ -6,5 +6,5 @@ package org.marktomko.arfftools.arff
  */
 class RelationSource[A] {
   def relationFrom(name: String, attributes: Seq[Attribute], instanceSource: InstanceSource[A], inputs: Seq[A]): Relation =
-    Relation(name, attributes, inputs map  { instanceSource.instanceFrom(_)})
+    Relation(name, attributes, inputs map  { instanceSource.instanceFrom(_) })
 }

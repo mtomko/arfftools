@@ -20,7 +20,7 @@ case class Relation(val name: String, val attributes: Seq[Attribute], val instan
     }
 
     // emit the instance data
-    buf.append('\n')
+    buf.append("\n@data\n")
     for (instance <- instances) {
       buf.append(instance.toString).append('\n')
     }

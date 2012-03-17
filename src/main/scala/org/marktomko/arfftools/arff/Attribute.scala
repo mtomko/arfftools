@@ -8,10 +8,17 @@ case class BinaryAttribute(n: String) extends Attribute(n, "binary")
 
 case class NumericAttribute(n: String) extends Attribute(n, "numeric")
 
+case class StringAttribute(n: String) extends Attribute(n, "string")
+
 case class NominalAttribute(n: String, range: Set[String]) extends Attribute(n, "nominal") {
   override def toString =
     new StringBuilder("@attribute ")
       .append(name)
-      .append(" { ").append(range.mkString(",")).append(" }")
+      .append(" { ")
+      .append(range.mkString(",")).append(" }")
       .toString()
+}
+
+case class BooleanAttribute(n: String) extends Attribute(n, "nominal") {
+  override def toString = new StringBuilder("@attribute ").append(name).append(" { true, false }").toString()
 }

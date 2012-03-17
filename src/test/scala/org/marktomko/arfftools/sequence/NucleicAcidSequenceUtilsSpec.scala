@@ -20,5 +20,22 @@ class NucleicAcidSequenceUtilsSpec extends Spec {
       val seq = "CGTGGATGAGTA"
       assert("TACTCATCCACG" === NucleicAcidSequenceUtils.reverseComplement(seq))
     }
+
+    it("should validate legal DNA sequences") {
+      val seq = "CGTGGATGAGTA"
+      assert(seq === NucleicAcidSequenceUtils.validate(seq))
+    }
+
+    it("should validate uncertain DNA sequences") {
+      val seq = "CGTGGA??AGTA"
+      assert(seq === NucleicAcidSequenceUtils.validate(seq))
+    }
+
+    it("should reject illegal sequences") {
+      val seq = "The quick brown fox jumped over the lazy dogs"
+      intercept[MatchError] {
+        NucleicAcidSequenceUtils.validate(seq)
+      }
+    }
   }
 }

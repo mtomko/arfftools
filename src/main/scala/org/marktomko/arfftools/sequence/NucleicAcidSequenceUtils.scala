@@ -9,9 +9,11 @@ object NucleicAcidSequenceUtils {
       c match {
         case 'A' => c
         case 'T' => c
-        case 'U' => c
+        case 'U' => c // T in DNA, U in RNA
         case 'G' => c
         case 'C' => c
+        case 'S' => c // G or C
+        case 'W' => c // A or T
         case 'N' => c
         case '?' => c
         case '-' => c
