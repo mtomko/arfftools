@@ -5,6 +5,7 @@ object PolyARelationWriter {
   def main(args: Array[String]) {
     import io.Source
     import java.io.File
+    import PolyA._
     import org.marktomko.arfftools.arff.{BooleanAttribute, Instance, Relation, StringAttribute}
 
     // check the arguments
@@ -18,7 +19,8 @@ object PolyARelationWriter {
 
     // generate index offsets and real indexes
     val relativeIndexes = FlankingIndexSource.indexesFor(64)
-    val absoluteIndexes = (relativeIndexes map {(i: Int) => if (i > 0) 106 + i else 100 + i})
+    val absoluteIndexes = relativeIndexes map { (i: Int) =>
+      if (i > 0) hexamerEndIndex + i else hexamerStartIndex + i }
 
     val nAtAttributeValueSources = NucleotideAtAttributeValueSource.sourcesFor(absoluteIndexes)
     val attributeValueSources = new SignalHexamerAttributeValueSource() +: nAtAttributeValueSources

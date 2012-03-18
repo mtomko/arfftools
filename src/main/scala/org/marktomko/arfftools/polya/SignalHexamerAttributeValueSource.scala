@@ -7,5 +7,6 @@ import org.marktomko.arfftools.arff.AttributeValueSource
  * that the sequence is 206 nucleotides: 100 upstream, 6 nt signal, 100 downstream.
  */
 class SignalHexamerAttributeValueSource extends AttributeValueSource[String, String] {
-  def valueFor(input: String) = input.substring(100, 106)
+  import PolyA._
+  def valueFor(input: String) = input.substring(hexamerStartIndex, hexamerEndIndex)
 }
