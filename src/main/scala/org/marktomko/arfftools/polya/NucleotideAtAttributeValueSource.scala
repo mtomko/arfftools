@@ -20,6 +20,6 @@ object NucleotideAtAttributeValueSource {
 
   def attributeFor(i: Int) =
     NominalAttribute(
-      n = new StringBuilder("n_").append(if (i > 0) "plus_" else "minus_").append(math.abs(i)).toString(),
+      name = new StringBuilder("n_").append(if (i > 0) "plus_" else "minus_").append(math.abs(i)).toString(),
       range = Set("A", "C", "G", "T"))
 }
