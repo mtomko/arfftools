@@ -2,7 +2,7 @@ package org.marktomko.arfftools.sequence
 
 import org.scalatest.Spec
 
-class SequenceReaderSpec extends Spec {
+class PutativePolyASiteSpec extends Spec {
   describe("PutativePolyASite helper") {
     it("should dissect sequences") {
       import org.marktomko.arfftools.polya.PutativePolyASite
