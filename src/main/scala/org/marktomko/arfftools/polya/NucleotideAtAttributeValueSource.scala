@@ -16,10 +16,14 @@ class NucleotideAtAttributeValueSource(i: Int) extends IndexBasedAttributeValueS
 object NucleotideAtAttributeValueSource {
   import org.marktomko.arfftools.arff.NominalAttribute
 
-  def sourcesFor(indexes: Iterable[Int]) = (indexes map { new NucleotideAtAttributeValueSource(_)}).toIndexedSeq
+  val dnaBases = Set("A", "C", "G", "T")
+
+  def sourcesFor(indexes: Iterable[Int]) = (indexes map { new NucleotideAtAttributeValueSource(_)})
 
   def attributeFor(i: Int) =
     NominalAttribute(
-      name = new StringBuilder("n_").append(if (i > 0) "plus_" else "minus_").append(math.abs(i)).toString(),
-      range = Set("A", "C", "G", "T"))
+      name = new StringBuilder("n_")
+        .append(if (i > 0) "plus_" else "minus_")
+        .append(math.abs(i)).toString(),
+      range = dnaBases)
 }
