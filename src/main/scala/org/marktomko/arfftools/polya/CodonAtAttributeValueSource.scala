@@ -1,6 +1,5 @@
 package org.marktomko.arfftools.polya
 
-import scalaz.Scalaz._
 import org.marktomko.arfftools.arff.NominalAttribute
 
 /**
@@ -22,7 +21,9 @@ object CodonAtAttributeValueSource {
 
   // scalaz magic from StackOverflow:
   // http://stackoverflow.com/questions/7474709/all-combinations-with-repetition-using-scala
-  lazy val codons = bases.replicate[Seq](3).sequence map { _.mkString }
+  //import scalaz.Scalaz._
+  //lazy val codons = bases.replicate[Seq](3).sequence map { _.mkString }
+  lazy val codons = for(b1 <- bases;  b2 <- bases; b3 <- bases) yield Seq(b1, b2, b3).mkString
 
   def sourcesFor(indexes: Iterable[Int]) = (indexes map { new CodonAtAttributeValueSource(_) })
 

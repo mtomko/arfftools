@@ -3,8 +3,7 @@ package org.marktomko.arfftools.polya
 import org.scalatest.Spec
 
 class FlankingIndexSourceSpec extends Spec {
-  describe ("Flanking Index Source") {
-
+  describe ("indexesFor") {
     it ("should generate symmetric ranges from negative to positive, excluding 0") {
       assert(Seq(-1, 1) === FlankingIndexSource.indexesFor(1).toIndexedSeq)
     }
