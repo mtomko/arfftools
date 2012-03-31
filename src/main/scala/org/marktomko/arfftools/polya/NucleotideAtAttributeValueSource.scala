@@ -9,7 +9,11 @@ class NucleotideAtAttributeValueSource(i: Int) extends IndexBasedAttributeValueS
   override def valueFor(input: String) = {
     assert(index >= 0)
     assert(index < input.length)
-    input.charAt(index).toString
+    val base = input.charAt(index).toString
+    base match {
+      case "A"|"C"|"G"|"T" => base
+      case _ => "?"
+     }
   }
 }
 

@@ -6,27 +6,59 @@ package org.marktomko.arfftools.polya
  * @author Mark Tomko <mjt0229@gmail.com>
  */
 object PolyARelationWriter {
+  import PolyA._
 
+  // generate relative index offsets
+  def nucleotideRelativeIndexes = FlankingIndexSource.indexesFor(64)
+  def nTripleRelativeIndexes = FlankingIndexSource.indexesFor(33)
+
+  // generate absolute index offsets
+  def nucleotideAbsoluteIndexes = nucleotideRelativeIndexes map { (i: Int) =>
+    if (i > 0) hexamerEndIndex + i - 1 else hexamerStartIndex + i }
+
+  def nTripleAbsoluteIndexes = nTripleRelativeIndexes map { (i: Int) =>
+    if (i > 0) hexamerEndIndex + (i - 1) * 3 else (hexamerStartIndex + i * 3) }
+
+  /**
+   * PolyARelationWriter main() method
+   * @param args
+   */
   def main(args: Array[String]) {
-    import io.Source
+    import scala.io.Source
     import java.io.File
-    import PolyA._
+    import scalax.io.{Codec, Resource}
     import org.marktomko.arfftools.arff.{BooleanAttribute, Instance, Relation, StringAttribute}
 
-    val (fileName, relationName, classification) = handleArgs(args)
+    // parse args
+    val (fileName, relationName, classification, outputFileName) = handleArgs(args)
 
-    // generate index offsets and real indexes
-    val relativeIndexes = FlankingIndexSource.indexesFor(64)
-    val absoluteIndexes = relativeIndexes map { (i: Int) =>
-      if (i > 0) hexamerEndIndex + i else hexamerStartIndex + i }
+    // generate all attributes that we will consider
+    val nAtAttributes = nucleotideRelativeIndexes map { NucleotideAtAttributeValueSource.attributeFor(_) }
+    val nTripleAtAttributes = nTripleRelativeIndexes map { NTripleAtAttributeValueSource.attributeFor(_) }
+    val enrichmentAttributes = Seq(
+      NucleotideEnrichmentAttributeValueSource.attributeFor('A', true),
+      NucleotideEnrichmentAttributeValueSource.attributeFor('C', true),
+      NucleotideEnrichmentAttributeValueSource.attributeFor('G', true),
+      NucleotideEnrichmentAttributeValueSource.attributeFor('T', true),
+      NucleotideEnrichmentAttributeValueSource.attributeFor('A', false),
+      NucleotideEnrichmentAttributeValueSource.attributeFor('C', false),
+      NucleotideEnrichmentAttributeValueSource.attributeFor('G', false),
+      NucleotideEnrichmentAttributeValueSource.attributeFor('T', false)
+    )
 
-    // build the descriptions of attributes we will generate
-    val flankingSeqAttributes = relativeIndexes map { NucleotideAtAttributeValueSource.attributeFor(_) }
-    val attributes = StringAttribute("signal") +: flankingSeqAttributes.toIndexedSeq :+ BooleanAttribute("isPolyA")
+    // assemble the list of all attributes
+    val attributes =
+      StringAttribute("signal") +:
+        (nAtAttributes ++ nTripleAtAttributes ++ enrichmentAttributes) :+
+        BooleanAttribute("isPolyA")
 
     // construct attribute value sources
-    val nAtAttributeValueSources = NucleotideAtAttributeValueSource.sourcesFor(absoluteIndexes)
-    val attributeValueSources = new SignalHexamerAttributeValueSource() +: nAtAttributeValueSources.toIndexedSeq
+    val nAtAttributeValueSources = NucleotideAtAttributeValueSource.sourcesFor(nucleotideAbsoluteIndexes)
+    val nTripleAtAttributeValueSources = NTripleAtAttributeValueSource.sourcesFor(nTripleAbsoluteIndexes)
+    val enrichmentAttributeValueSources = NucleotideEnrichmentAttributeValueSource.sources()
+    val attributeValueSources =
+      new SignalHexamerAttributeValueSource() +:
+        (nAtAttributeValueSources ++ nTripleAtAttributeValueSources ++ enrichmentAttributeValueSources).toIndexedSeq
 
     // map over all the lines
     val instances = Source.fromFile(new File(fileName)).getLines() map { (line :String) =>
@@ -38,17 +70,19 @@ object PolyARelationWriter {
     val relation = Relation(relationName, attributes, instances.toIndexedSeq)
 
     // a side-effect!
-    System.out.println(relation.toString)
+    val output = Resource.fromFile(outputFileName)
+    output.write(relation.toString)(Codec.UTF8)
   }
 
-  private[this] def handleArgs(args: Array[String]): (String, String, String) = {
+  private[this] def handleArgs(args: Array[String]): (String, String, String, String) = {
     // make sure we got enough arguments
-    if (args.length != 3) {
+    if (args.length != 4) {
       throw new IllegalArgumentException("Required filename, relation name, and classification")
     }
     val fileName = args(0)
     val relationName = args(1)
     val classification = args(2)
-    (fileName, relationName, classification)
+    val outputFileName = args(3)
+    (fileName, relationName, classification, outputFileName)
   }
 }
