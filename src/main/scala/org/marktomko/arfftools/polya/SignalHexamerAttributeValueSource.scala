@@ -9,4 +9,15 @@ import org.marktomko.arfftools.arff.AttributeValueSource
 class SignalHexamerAttributeValueSource extends AttributeValueSource[String, String] {
   import PolyA._
   def valueFor(input: String) = input.substring(hexamerStartIndex, hexamerEndIndex)
+
+  def hexamerToInt(input: String): Int = {
+    assert(input.length == 6)
+    (input map { _ match {
+        case 'A' => 0
+        case 'C' => 1
+        case 'G' => 2
+        case 'T' => 3
+      }
+    }) reduce(_ * 4 + _ )
+  }
 }
