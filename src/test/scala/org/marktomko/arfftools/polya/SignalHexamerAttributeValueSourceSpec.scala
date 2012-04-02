@@ -2,7 +2,7 @@ package org.marktomko.arfftools.polya
 
 import org.scalatest.Spec
 
-class SignalHexamerAttributeValueSourceTest extends Spec {
+class SignalHexamerAttributeValueSourceSpec extends Spec {
   describe("hexamerToInt") {
     it ("should map hexamers over the range [0, 4096)") {
       val avs = new SignalHexamerAttributeValueSource()

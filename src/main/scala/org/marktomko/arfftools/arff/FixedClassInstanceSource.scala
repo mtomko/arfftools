@@ -9,7 +9,7 @@ package org.marktomko.arfftools.arff
  * @tparam A the input type
  */
 class FixedClassInstanceSource[A](
-  val attributeValueSources: Seq[AttributeValueSource[A, _]],
+  val attributeValueSources: Seq[AttributeValueSource[A]],
   val classification: String) extends InstanceSource[A] {
 
   override def instanceFrom(input: A) = {

@@ -1,6 +1,6 @@
 package org.marktomko.arfftools.polya
 
-import org.marktomko.arfftools.arff.NominalAttribute
+import org.marktomko.arfftools.arff.AttributeValueSource
 
 /**
  * This attribute value source generates the codon (3 nucleotides)
@@ -9,7 +9,9 @@ import org.marktomko.arfftools.arff.NominalAttribute
  * @param i the index
  */
 class NTripleAtAttributeValueSource(i: Int) extends IndexBasedAttributeValueSource(i) {
-  def valueFor(input: String) = {
+  import org.marktomko.arfftools.arff.NominalAttribute
+
+  override def valueFor(input: String) = {
     assert(index >= 0)
     assert(index < input.length)
     val triple = input.substring(index, index + 3)
@@ -20,6 +22,12 @@ class NTripleAtAttributeValueSource(i: Int) extends IndexBasedAttributeValueSour
       "?"
     }
   }
+  override def attributeFor() =
+    NominalAttribute(
+      name = new StringBuilder("c_")
+        .append(if (index > 0) "plus_" else "minus_")
+        .append(math.abs(index)).toString(),
+      range = NTripleAtAttributeValueSource.nTriples)
 }
 
 object NTripleAtAttributeValueSource {
@@ -31,12 +39,5 @@ object NTripleAtAttributeValueSource {
   //lazy val nTriples = bases.replicate[Seq](3).sequence map { _.mkString }
   lazy val nTriples = for(b1 <- bases;  b2 <- bases; b3 <- bases) yield Seq(b1, b2, b3).mkString
 
-  def sourcesFor(indexes: Iterable[Int]) = (indexes map { new NTripleAtAttributeValueSource(_) })
-
-  def attributeFor(i: Int) =
-    NominalAttribute(
-      name = new StringBuilder("c_")
-        .append(if (i > 0) "plus_" else "minus_")
-        .append(math.abs(i)).toString(),
-      range = nTriples)
+  def sourcesFor(indexes: Iterable[Int]):Iterable[AttributeValueSource[String]] = (indexes map { new NTripleAtAttributeValueSource(_) })
 }

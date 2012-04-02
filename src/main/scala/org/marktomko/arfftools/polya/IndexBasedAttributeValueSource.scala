@@ -12,4 +12,4 @@ import org.marktomko.arfftools.arff.AttributeValueSource
  * @author Mark Tomko <mjt0229@gmail.com>
  * @param index the index to inspect
  */
-abstract class IndexBasedAttributeValueSource(val index: Int) extends AttributeValueSource[String, String]
+abstract class IndexBasedAttributeValueSource(val index: Int) extends AttributeValueSource[String]

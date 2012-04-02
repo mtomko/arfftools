@@ -15,6 +15,11 @@ object NucleicAcidSequenceUtils {
         case 'S' => c // G or C
         case 'W' => c // A or T
         case 'N' => c
+        case 'R' => c //???
+        case 'Y' => c //???
+        case 'K' => c //???
+        case 'D' => c //?
+        case 'M' => c //?
         case '?' => c
         case '-' => c
       }

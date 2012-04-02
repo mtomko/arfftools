@@ -11,13 +11,22 @@ import org.marktomko.arfftools.arff.{NumericAttribute, AttributeValueSource}
  * @param base the base we are calculating enrichment for
  */
 class NucleotideEnrichmentAttributeValueSource(val base: Char, val lower: Int, val upper: Int)
-  extends AttributeValueSource[String, Float] {
+  extends AttributeValueSource[String] {
 
-  def valueFor(input: String) = {
+  override def valueFor(input: String) = {
     val subSeq = input.substring(lower, upper)
     val baseCount = (subSeq filter { _ == base }).size.toFloat
     val definiteSubSeqCount = (subSeq filter { Seq('A', 'C', 'G', 'T') contains _ }).size
     (baseCount / definiteSubSeqCount) - 0.25F
+  }
+
+  override def attributeFor() = {
+    val upstream = upper <= PolyA.hexamerStartIndex
+    NumericAttribute(
+      name = new StringBuilder()
+        .append(base)
+        .append("_enrich_")
+        .append(if (upstream) "upstream" else "downstream").toString())
   }
 
   override def toString =
@@ -45,11 +54,4 @@ object NucleotideEnrichmentAttributeValueSource {
       new NucleotideEnrichmentAttributeValueSource('T', hexamerEndIndex, sequenceLength)
     )
   }
-
-  def attributeFor(base: Char, upstream: Boolean) =
-    NumericAttribute(
-      name = new StringBuilder()
-        .append(base)
-        .append("_enrich_")
-        .append(if (upstream) "upstream" else "downstream").toString())
 }

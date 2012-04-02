@@ -6,9 +6,13 @@ import org.marktomko.arfftools.arff.AttributeValueSource
  * This attribute value source extracts the PolyA signal hexamer (assuming
  * that the sequence is 206 nucleotides: 100 upstream, 6 nt signal, 100 downstream.
  */
-class SignalHexamerAttributeValueSource extends AttributeValueSource[String, String] {
+class SignalHexamerAttributeValueSource extends AttributeValueSource[String] {
   import PolyA._
-  def valueFor(input: String) = input.substring(hexamerStartIndex, hexamerEndIndex)
+  import org.marktomko.arfftools.arff.NumericAttribute
+
+  override def valueFor(input: String) = hexamerToInt(input.substring(hexamerStartIndex, hexamerEndIndex))
+
+  override def attributeFor = NumericAttribute("signal")
 
   def hexamerToInt(input: String): Int = {
     assert(input.length == 6)

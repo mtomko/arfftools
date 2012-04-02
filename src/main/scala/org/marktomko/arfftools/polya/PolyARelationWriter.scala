@@ -27,38 +27,21 @@ object PolyARelationWriter {
     import scala.io.Source
     import java.io.File
     import scalax.io.{Codec, Resource}
-    import org.marktomko.arfftools.arff.{BooleanAttribute, Instance, Relation, StringAttribute}
+    import org.marktomko.arfftools.arff.{BooleanAttribute, Instance, Relation}
 
     // parse args
     val (fileName, relationName, classification, outputFileName) = handleArgs(args)
 
-    // generate all attributes that we will consider
-    val nAtAttributes = nucleotideRelativeIndexes map { NucleotideAtAttributeValueSource.attributeFor(_) }
-    val nTripleAtAttributes = nTripleRelativeIndexes map { NTripleAtAttributeValueSource.attributeFor(_) }
-    val enrichmentAttributes = Seq(
-      NucleotideEnrichmentAttributeValueSource.attributeFor('A', true),
-      NucleotideEnrichmentAttributeValueSource.attributeFor('C', true),
-      NucleotideEnrichmentAttributeValueSource.attributeFor('G', true),
-      NucleotideEnrichmentAttributeValueSource.attributeFor('T', true),
-      NucleotideEnrichmentAttributeValueSource.attributeFor('A', false),
-      NucleotideEnrichmentAttributeValueSource.attributeFor('C', false),
-      NucleotideEnrichmentAttributeValueSource.attributeFor('G', false),
-      NucleotideEnrichmentAttributeValueSource.attributeFor('T', false)
-    )
+    // construct attribute value sources
+    val nAtAttributeValueSources = NucleotideAtAttributeValueSource.sourcesFor(nucleotideAbsoluteIndexes).toSeq
+    val nTripleAtAttributeValueSources = NTripleAtAttributeValueSource.sourcesFor(nTripleAbsoluteIndexes).toSeq
+    val enrichmentAttributeValueSources = NucleotideEnrichmentAttributeValueSource.sources().toSeq
+    val attributeValueSources =
+      new SignalHexamerAttributeValueSource +:
+        (nAtAttributeValueSources ++ nTripleAtAttributeValueSources ++ enrichmentAttributeValueSources)
 
     // assemble the list of all attributes
-    val attributes =
-      StringAttribute("signal") +:
-        (nAtAttributes ++ nTripleAtAttributes ++ enrichmentAttributes) :+
-        BooleanAttribute("isPolyA")
-
-    // construct attribute value sources
-    val nAtAttributeValueSources = NucleotideAtAttributeValueSource.sourcesFor(nucleotideAbsoluteIndexes)
-    val nTripleAtAttributeValueSources = NTripleAtAttributeValueSource.sourcesFor(nTripleAbsoluteIndexes)
-    val enrichmentAttributeValueSources = NucleotideEnrichmentAttributeValueSource.sources()
-    val attributeValueSources =
-      new SignalHexamerAttributeValueSource() +:
-        (nAtAttributeValueSources ++ nTripleAtAttributeValueSources ++ enrichmentAttributeValueSources).toIndexedSeq
+    val attributes = (attributeValueSources map { _.attributeFor }).toSeq :+  BooleanAttribute("isPolyA")
 
     // map over all the lines
     val instances = Source.fromFile(new File(fileName)).getLines() map { (line :String) =>
