@@ -1,12 +1,12 @@
+import AssemblyKeys._ // for assembly plugin
+
 name := "arfftools"
 
 version := "1.0.0"
 
 scalaVersion := "2.9.1"
 
-//resolvers += "Oracle Repository" at "http://download.oracle.com/maven/"
-
-scalacOptions += "-deprecation"
+scalacOptions ++= Seq("-unchecked", "-deprecation")
 
 libraryDependencies ++= Seq(
     "org.scalaz" %% "scalaz-core" % "6.0.4",
@@ -16,3 +16,7 @@ libraryDependencies ++= Seq(
     "com.github.scala-incubator.io" %% "scala-io-core" % "0.3.0",
     "com.github.scala-incubator.io" %% "scala-io-file" % "0.3.0"
 )
+
+//jarName in assembly := "arfftools.jar"
+
+seq(assemblySettings: _*)
