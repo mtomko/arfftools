@@ -5,17 +5,18 @@ import org.marktomko.arfftools.arff.AttributeValueSource
 /**
  * This attribute value source generates the single nucleotide at the
  * specified index as its value.
- * @param i the index
+ * @param relativeIndex the index relative to the point of interest
+ * @param absoluteIndex the absolute index of the attribute value in the string
  */
-class NucleotideAtAttributeValueSource(i: Int) extends IndexBasedAttributeValueSource(i) {
+class NucleotideAtAttributeValueSource(relativeIndex: Int, absoluteIndex: Int) extends AttributeValueSource[String] {
   import org.marktomko.arfftools.arff.NominalAttribute
 
   val dnaBases = Set("A", "C", "G", "T")
 
   override def valueFor(input: String) = {
-    assert(index >= 0)
-    assert(index < input.length)
-    val base = input.charAt(index).toString
+    assert(absoluteIndex >= 0)
+    assert(absoluteIndex < input.length)
+    val base = input.charAt(absoluteIndex).toString
     base match {
       case "A"|"C"|"G"|"T" => base
       case _ => "?"
@@ -25,11 +26,13 @@ class NucleotideAtAttributeValueSource(i: Int) extends IndexBasedAttributeValueS
   override def attributeFor() =
     NominalAttribute(
       name = new StringBuilder("n_")
-        .append(if (index > 0) "plus_" else "minus_")
-        .append(math.abs(index)).toString(),
+        .append(if (relativeIndex > 0) "plus_" else "minus_")
+        .append(math.abs(relativeIndex)).toString(),
       range = dnaBases)
 }
 
 object NucleotideAtAttributeValueSource {
-  def sourcesFor(indexes: Iterable[Int]):Iterable[AttributeValueSource[String]] = (indexes map { new NucleotideAtAttributeValueSource(_)})
+  def sourcesFor(indexes: Iterable[(Int,Int)]):Iterable[AttributeValueSource[String]] =
+    indexes map { indexes: (Int, Int) =>
+      new NucleotideAtAttributeValueSource(indexes._1, indexes._2) }
 }

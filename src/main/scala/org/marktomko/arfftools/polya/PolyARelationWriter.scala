@@ -19,6 +19,9 @@ object PolyARelationWriter {
   def nTripleAbsoluteIndexes = nTripleRelativeIndexes map { (i: Int) =>
     if (i > 0) hexamerEndIndex + (i - 1) * 3 else (hexamerStartIndex + i * 3) }
 
+  def zippedNucleotideIndexes = nucleotideRelativeIndexes zip nucleotideAbsoluteIndexes
+  def zippedNTripleIndexes = nTripleRelativeIndexes zip nTripleAbsoluteIndexes
+
   /**
    * PolyARelationWriter main() method
    * @param args
@@ -33,8 +36,8 @@ object PolyARelationWriter {
     val (fileName, relationName, classification, outputFileName) = handleArgs(args)
 
     // construct attribute value sources
-    val nAtAttributeValueSources = NucleotideAtAttributeValueSource.sourcesFor(nucleotideAbsoluteIndexes).toSeq
-    val nTripleAtAttributeValueSources = NTripleAtAttributeValueSource.sourcesFor(nTripleAbsoluteIndexes).toSeq
+    val nAtAttributeValueSources = NucleotideAtAttributeValueSource.sourcesFor(zippedNucleotideIndexes).toSeq
+    val nTripleAtAttributeValueSources = NTripleAtAttributeValueSource.sourcesFor(zippedNTripleIndexes).toSeq
     val enrichmentAttributeValueSources = NucleotideEnrichmentAttributeValueSource.sources().toSeq
     val attributeValueSources =
       new SignalHexamerAttributeValueSource +:
